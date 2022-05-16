@@ -94,12 +94,12 @@ This next step is necessary because we are working with paired-end reads. We are
 ```bash
 awk 'FNR%2' 220516_claudia_analysis_sample_names_and_numbers.csv > 220516_claudia_analysis_file_list_every_other.csv
 ```
-_Make sure you open the resulting file using `vi` to manually remove the header line._ Once that is done, we can make symbolic links (symlinks) to point to the data rather than take up disk space by needlessly duplicating the original files. **Note** that when I analyzed the original dataset, I set `n` to start at 73 and then increased that value by 1 with each iteration of the `while` loop. Since this iteration of the analysis only contains the GWAS samples, there are gaps in the sequence of sample numbers, necessitating a different approach. The approach I used involves extracting the sample number ("Snumber") from the file name and using that rather than relying on counting iterations through the loop.
+_Make sure you open the resulting file using `vi` to manually remove the header line._ Once that is done, we can make symbolic links (symlinks) to point to the data rather than take up disk space by needlessly duplicating the original files. Since this iteration of the analysis only contains the your (Claudia) samples, the first number is 843 because that's where your samples began in the dataset.. The approach I used involves extracting the sample number ("Snumber") from the file name and using that rather than relying on counting iterations through the loop.
 ```bash
 # Make symlinks to GBS data
-cat 220516_claudia_analysis_file_list_every_other.csv | cut -f 9 -d / \
+cat 220516_claudia_analysis_file_list_every_other.csv | cut -f 2 -d , \
 	| while read i; do
-	STEM=$(echo $i | rev | cut -f 3,4,5,6,7,8 -d "_" | rev)
+	STEM=$(echo $i | cut -f 1,2 -d "_")
 	Snumber=$(echo $i | rev | cut -f 3 -d "_"| rev | sed 's/^S//g')
 	n=$(printf "%04d\n" $Snumber)
 	echo $STEM
