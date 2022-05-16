@@ -81,3 +81,8 @@ cat 220516_claudia_analysis_sample_names_and_numbers.csv | cut -f 1 -d , \
 	mkdir -p $d
 	done
 ```
+
+Once that is done, you will probably notice that there is a directory called "Sample_sample_number" which is an artefact of the code. I probably could change the code so that the header isn't interpreted as a sample name, but it's also super easy to just remove it after the code finishes. You can easily remove it with a one-liner:
+```bash
+rm -rf ample_sample_number
+```
