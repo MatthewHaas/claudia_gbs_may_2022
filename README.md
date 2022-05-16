@@ -156,3 +156,4 @@ done
 ```
 
 ## Quality Control
+After we have the directory structure setup, the first thing we want to do is check the FASTQ files with [FastQC](https://github.com/s-andrews/FastQC) which I accomplished using the [run_fastqc.sh](fastqc/run_fastqc.sh) and [fastqc_wrapper_script.sh](fastqc/fastqc_wrapper_script.sh). The results look fine (some flags and warnings are to be expected). The major take-away from this process is that the adapter contamination comes from the Nextera Transposase Sequence. This is helpful information because now we know what sequence to trim in the next step using [cutadapt](https://cutadapt.readthedocs.io/en/stable/).
