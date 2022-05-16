@@ -33,6 +33,14 @@ Followed by:
 ```bash
 ls S* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
 ```
+After finishing the entire directoy, I discovered there were a handful of samples that should be included in Claudia's dataset, but do not follow the pattern previously established with the "R" or "S" prefixes. They are: "10-R-2021-pool1", "10-S-2021-pool2", "12A-2021-pool3", and "12B-2021-pool3". So, I need to go back and re-do the setup and FastQC/Adapter Trimming steps so that these are included. Fortunately, this didn't cost too much extra time. I caught the issue early.
+```bash
+ls 10-R-2021-pool1* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls 10-S-2021-pool2* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls 12A-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls 12B-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+```
+
 **Note** The `>>` allows output from a command like `ls` to be appended to a file unlke `>` which would overwrite anything in the file that follows the symbol.
 
 Now, we can move back to the global scratch directory where we are working:
