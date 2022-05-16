@@ -3,6 +3,8 @@ Analysis of Claudia's GBS data from May 2022
 ## Contents
 1. [Directory Setup](#Directory-Setup)
 2. [Quality Control](#Quality-Control)
+3. [Adapter Trimming](#Adapter-Trimming)
+4. [Alignment](#Alignment)
 
 ## Directory Setup
 The data can be found here: `/home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/
@@ -157,3 +159,9 @@ done
 
 ## Quality Control
 After we have the directory structure setup, the first thing we want to do is check the FASTQ files with [FastQC](https://github.com/s-andrews/FastQC) which I accomplished using the [run_fastqc.sh](fastqc/run_fastqc.sh) and [fastqc_wrapper_script.sh](fastqc/fastqc_wrapper_script.sh). The results look fine (some flags and warnings are to be expected). The major take-away from this process is that the adapter contamination comes from the Nextera Transposase Sequence. This is helpful information because now we know what sequence to trim in the next step using [cutadapt](https://cutadapt.readthedocs.io/en/stable/).
+
+## Adapter Trimming
+To remove the Nextera Transposase Sequence, we used the [run_cutadapt.sh](cutadapt/run_cutadapt.sh) and [cutadapt_wrapper_script.sh](cutadapt/cutadapt_wrapper_script.sh) scripts.
+
+## Alignment
+After the adapter sequences have been removed, it was time to perform the alignment using the [run_bwa.sh](alignment/run_bwa.sh) script.
