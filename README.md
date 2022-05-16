@@ -35,3 +35,5 @@ Now, we can move back to the global scratch directory where we are working:
 ```bash
 cd /scratch.global/haasx092/claudia_gbs_may_2022
 ```
+
+This project used paired-end sequencing, so there are actually 2 files (spread out over 2 lines) per sample. They are denoted by "R1" (the forward read) and "R2" (the reverse read). So, as we build the directory structure, we need to keep this in mind because we want to create 1 subdirectory per sample and group both "R1" and "R2" reads from the same sample in each respective subdirectory.
