@@ -1,8 +1,8 @@
 # Analysis of Claudia's GBS data (May 2022)
 Analysis of Claudia's GBS data from May 2022
 ## Contents
-1. [Directory Setup](##Directory-Setup)
-2. [Quality Control](##Quality-Control)
+1. [Directory Setup](#Directory-Setup)
+2. [Quality Control](#Quality-Control)
 
 ## Directory Setup
 The data can be found here: `/home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/
