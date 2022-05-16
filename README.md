@@ -30,3 +30,8 @@ Followed by:
 ls S* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
 ```
 **Note** The `>>` allows output from a command like `ls` to be appended to a file unlke `>` which would overwrite anything in the file that follows the symbol.
+
+Now, we can move back to the global scratch directory where we are working:
+```bash
+cd /scratch.global/haasx092/claudia_gbs_may_2022
+```
