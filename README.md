@@ -70,3 +70,14 @@ write.csv(x, file="220516_claudia_analysis_sample_names_and_numbers.csv", row.na
 # Save table as an R object
 save(x, file="220516_claudia_analysis_sample_names_and_numbers.Rdata")
 ```
+After that is done, use the CSV file using bash to create the directory structure.
+**Note:** The `echo $i` part is not really necessary. I just included it to watch the progress.
+
+```bash
+cat 220516_claudia_analysis_sample_names_and_numbers.csv | cut -f 1 -d , \
+	| while read i; do
+	d=Sample_$i
+	echo $i
+	mkdir -p $d
+	done
+```
