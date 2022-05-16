@@ -1,6 +1,10 @@
 # Analysis of Claudia's GBS data (May 2022)
 Analysis of Claudia's GBS data from May 2022
+## Contents
+1. [Directory Setup](##-Directory-Setup)
+2. [Quality Control](##-Quality-Control)
 
+## Directory Setup
 The data can be found here: `/home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/
 `<br><br>
 We will be working in the [global scratch](https://www.msi.umn.edu/content/scratch-storage) directory so we don't consume our group's storage quota. Just reminder: If you want or need to check the amount of resources the group is using, type `groupquota -g jkimball` on the command line. (Really, `groupquota` is enough, but if `jkimball` isn't your primary group, you'll need to include the second part.<br><br>
@@ -142,3 +146,5 @@ do
 ls -lh ${i}/${i}_R1.fq.gz >> check_symlinks_full_paths.txt
 done
 ```
+
+## Quality Control
