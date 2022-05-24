@@ -6,6 +6,7 @@ Analysis of Claudia's GBS data from May 2022
 3. [Adapter Trimming](#Adapter-Trimming)
 4. [Alignment](#Alignment)
 5. [Index BAMs](#Index-BAMs)
+6. [SNP calling](#SNP-calling)
 
 ## Directory Setup
 The data can be found here:
@@ -171,3 +172,6 @@ After the adapter sequences have been removed, it was time to perform the alignm
 
 ## Index BAMs
 Before moving on to the actual SNP calling step, you must first index the bam files which you can accomplish using the [index_bams.sh](index_bams/index_bams.sh) script. Actually, you won't be able to move forward without completing this step. If you try, the SNP calling script [scythe_mpileup.sh](snp_calling/scythe_mpileup.sh) will run, but it will end prematurely if the bam index files are not there.
+
+## SNP calling
+Now, we proceed to the actual SNP-calling step using [scythe_mpileup.sh](snp_calling/scythe_mpileup.sh). One parameter to pay particular attention to is the `-q 20` option. This means that _the minimum mapping quality (MQ) for an alignment to be used_ is 20. This is a measurement of the quality of the read being mapped, not the base at the SNP. You can increase the stringency up to `-q 60`, although `-q 20` is acceptable It's a phred-like score and means that the minimum acceptable probability for a read being correct is 99%. Reads with a lower mapping quality are filtered out. Many (if not most) reads will have an even higher probability of being right.**Note:** This script uses [GNU Parallel](https://www.gnu.org/software/parallel/), so make sure you cite the program in any manuscript that uses results from these data. You can get the citation info by running `parallel --citation`. (You'll need to run `module load parallel` first.)
