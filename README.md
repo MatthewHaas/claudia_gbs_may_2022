@@ -8,7 +8,8 @@ Analysis of Claudia's GBS data from May 2022
 5. [Index BAMs](#Index-BAMs)
 6. [SNP calling](#SNP-calling)
 7. [Filter SNP calls](#Filter-SNP-calls)
-8. [Create SNP matrix](#Create-SNP-matrix)
+8. [Principal Component Analysis](#Principal-Component-Analysis)
+9. [Create SNP matrix](#Create-SNP-matrix)
 
 ## Directory Setup
 The data can be found here:
@@ -191,6 +192,16 @@ Anyway, use the script [filter_with_vcftools.sh](filter_vcfs/filter_with_vcftool
 **Note:** So far, most of the software programs we have been using so far have already been installed by the Minnesota Supercomputing Institute (MSI). That's why you can use them by calling `module load` and then referring to them in your code simply by calling the name of the program (e.g., `bwa`, `samtools`, or `bcftools`). [`VCFtools`](https://vcftools.github.io/index.html) is different because I had to install it myself and refer to the place where it is installed in my script (`~/vcftools/bin/vcftools`) rather than just using `vcftools`.
 
 Once the `VCF` files have been filtered according to your desired parameters, you can move on to the next step: putting the SNP calls into a `CSV`-formatted SNP matrix. However, I also like working with [plink](https://zzz.bwh.harvard.edu/plink/index.shtml), especially for performing principal component analysis (PCA). As a first step in that analysis, I merge the 17 filtered `VCF` files into a single merged `VCF` file with [concat_filtered_vcfs.sh](filter_vcfs/concat_filtered_vcfs.sh).
+
+## Principal Component Analysis
+The first step in the pricipal component analysis (PCA) is to run the script [run_plink.sh](plink/run_plink.sh) which will convert the merged `VCF` file into plink format and generate the _eigenvalue_ and _eigenvector_ files that are necessary to make the PCA plots in the R statistical environment. The _eigenvalue_ tells you how much variation is explained by each of the principal components while the _eigenvector_ provides plotting coordinates for each sample on the PCA plot(s). The next step is to run the script [run_plot_plink_pca.sh](plink/run_plot_plink_pca.sh) which requires the R script [plot_plink_pca.R](plink/plot_plink_pca.R) and the `CSV` file [220516_claudia_analysis_sample_key.csv](helper_files/220516_claudia_analysis_sample_key.csv). The path to that `CSV` file is hard-coded into my script so you'll need to change that to reflect where you put the file. You will notice several components to the bash script:<br>
+```bash
+Rscript plot_plink_pca.R  claudia_gbs_may_2022_pca.eigenvec claudia_gbs_may_2022_pca.eigenval 220518_claudia_gbs_may_2022.pdf 220518_claudia_gbs_may_2022.Rdata
+```
+The first part tells bash to use R; the next position (technically the "0" position is the name of the R script you want to use). The following files (positions 1, 2, 3, and 4 or `args[1]`, `args[2]`, `args[3]`, and `args[4]` in the R language) are file names that are inserted into the R script in lieu of hard-coding them into the script itself. This way, you can repeatedly use the same R script.
+
+One of the output files will be a `PDF` file with multiple PCA plots (through the first 8 PCs). We use `PDF` format because it is superior in terms of maintaining resolution. However, you can export to other file types including `PNG`, `JPG`, or `TIF` for presentations, publications, or to use in your own GitHub repositories like the example below (generated in the process of creating this README document).<br>
+<img src="images/claudia_gbs_may_2022_PC1_vs_PC2.png" width="500">
 
 ## Create SNP matrix
 The conversion of the `VCF` files to a single tab-separated value (`TSV`) file containing the SNP data is done using `AWK`. The script that does the work is called [normalize.awk](create_snp_matrix/normalize.awk) and is launched using [run_normalize_awk.sh](create_snp_matrix/run_normalize_awk.sh). The `TSV` file is in long format. That means it has one line per SNP + Individual (sample) combination. You'll want to put this into a SNP matrix (`CSV` format) that has one column per sample and one row per SNP. The R script [filter_snps_and_make_wide_format.R](create_snp_matrix/filter_snps_and_make_wide_format.R) will do this. You run the R script using the bash script [run_filter_snps_and_make_wide_format.sh](create_snp_matrix/run_filter_snps_and_make_wide_format.sh). It takes the `TSV` format as input (`args[1]` in R) and outputs a `CSV` file containing the SNP matrix and an `.Rdata` file from the process (`args[2]` ad `args[3]`, respectively).
