@@ -5,6 +5,7 @@ Analysis of Claudia's GBS data from May 2022
 2. [Quality Control](#Quality-Control)
 3. [Adapter Trimming](#Adapter-Trimming)
 4. [Alignment](#Alignment)
+5. [Index BAMs](#Index-BAMs)
 
 ## Directory Setup
 The data can be found here:
@@ -167,3 +168,6 @@ To remove the Nextera Transposase Sequence, we used the [run_cutadapt.sh](cutada
 
 ## Alignment
 After the adapter sequences have been removed, it was time to perform the alignment using the [run_bwa.sh](alignment/run_bwa.sh) script.
+
+## Index BAMs
+Before moving on to the actual SNP calling step, you must first index the bam files which you can accomplish using the [index_bams.sh](index_bams/index_bams.sh) script. Actually, you won't be able to move forward without completing this step. If you try, the SNP calling script [scythe_mpileup.sh](snp_calling/scythe_mpileup.sh) will run, but it will end prematurely if the bam index files are not there.
