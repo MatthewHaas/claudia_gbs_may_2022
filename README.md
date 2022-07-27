@@ -12,7 +12,13 @@ Analysis of Claudia's GBS data from May 2022
 9. [Create SNP matrix](#Create-SNP-matrix)
 
 ## Directory Setup
-The data can be found here:
+
+New/updated data can be found here:
+```bash
+/home/jkimball/data_delivery/umgc/2022-q3/220701_A00223_0866_AHVFKKDSX3/Kimball_Project_009
+```
+
+The old/mixed-up data can be found here:
 ```bash
 /home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/
 ```
@@ -36,25 +42,25 @@ ls S*
 
 Now we can begin the process of writing the sample (file) names to the text file that we can iterate over.<br>
 ```bash
-ls R* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls R* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
 ```
 Followed by:
 ```bash
-ls S* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls S* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
 ```
 After finishing the entire directoy, I discovered there were a handful of samples that should be included in Claudia's dataset, but do not follow the pattern previously established with the "R" or "S" prefixes. They are: "10-R-2021-pool1", "10-S-2021-pool2", "12A-2021-pool3", and "12B-2021-pool3". So, I need to go back and re-do the setup and FastQC/Adapter Trimming steps so that these are included. Fortunately, this didn't cost too much extra time. I caught the issue early.
 ```bash
-ls 10-R-2021-pool1* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
-ls 10-S-2021-pool2* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
-ls 12A-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
-ls 12B-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_may_2022/claudia_samples.txt
+ls 10-R-2021-pool1* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
+ls 10-S-2021-pool2* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
+ls 12A-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
+ls 12B-2021-pool3* >> /scratch.global/haasx092/claudia_gbs_july_2022/claudia_samples.txt
 ```
 
 **Note** The `>>` allows output from a command like `ls` to be appended to a file unlke `>` which would overwrite anything in the file that follows the symbol.
 
 Now, we can move back to the global scratch directory where we are working:
 ```bash
-cd /scratch.global/haasx092/claudia_gbs_may_2022
+cd /scratch.global/haasx092/claudia_gbs_july_2022
 ```
 
 This project used paired-end sequencing, so there are actually 2 files (spread out over 2 lines) per sample. They are denoted by "R1" (the forward read) and "R2" (the reverse read). So, as we build the directory structure, we need to keep this in mind because we want to create 1 subdirectory per sample and group both "R1" and "R2" reads from the same sample in each respective subdirectory.
@@ -86,16 +92,16 @@ x[order(sample_number)] -> x
 setcolorder(x, c("sample_number", "filename")) -> x
 
 # Write output to CSV
-write.csv(x, file="220516_claudia_analysis_sample_names_and_numbers.csv", row.names=FALSE, col.names=FALSE, sep=",", quote=FALSE)
+write.csv(x, file="220727_claudia_analysis_sample_names_and_numbers.csv", row.names=FALSE, col.names=FALSE, sep=",", quote=FALSE)
 
 # Save table as an R object
-save(x, file="220516_claudia_analysis_sample_names_and_numbers.Rdata")
+save(x, file="220727_claudia_analysis_sample_names_and_numbers.Rdata")
 ```
 After that is done, use the CSV file using bash to create the directory structure.
 **Note:** The `echo $i` part is not really necessary. I just included it to watch the progress.
 
 ```bash
-cat 220516_claudia_analysis_sample_names_and_numbers.csv | cut -f 1 -d , \
+cat 220727_claudia_analysis_sample_names_and_numbers.csv | cut -f 1 -d , \
 	| while read i; do
 	d=Sample_$i
 	echo $i
@@ -109,23 +115,23 @@ rm -rf Sample_sample_number
 ```
 Next, you should make a file with the list of directories. This text file will come in handy for future steps of the GBS analysis.
 ```bash
-ls Sample*/ -d | tr -d / > 220516_claudia_analysis_sample_directory_list.txt
+ls Sample*/ -d | tr -d / > 220727_claudia_analysis_sample_directory_list.txt
 ```
 This next step is necessary because we are working with paired-end reads. We are doing it because the csv file contains 2 lines per sample (one for the forward read and one for the reverse read).
 ```bash
-awk 'FNR%2' 220516_claudia_analysis_sample_names_and_numbers.csv > 220516_claudia_analysis_file_list_every_other.csv
+awk 'FNR%2' 220727_claudia_analysis_sample_names_and_numbers.csv > 220727_claudia_analysis_file_list_every_other.csv
 ```
 _Make sure you open the resulting file using `vi` to manually remove the header line._ Once that is done, we can make symbolic links (symlinks) to point to the data rather than take up disk space by needlessly duplicating the original files. Since this iteration of the analysis only contains the your (Claudia) samples, the first number is 843 because that's where your samples began in the dataset.. The approach I used involves extracting the sample number ("Snumber") from the file name and using that rather than relying on counting iterations through the loop.
 ```bash
 # Make symlinks to GBS data
-cat 220516_claudia_analysis_file_list_every_other.csv | cut -f 2 -d , \
+cat 220727_claudia_analysis_file_list_every_other.csv | cut -f 2 -d , \
 	| while read i; do
 	STEM=$(echo $i | cut -f 1,2 -d "_")
 	Snumber=$(echo $i | rev | cut -f 3 -d "_"| rev | sed 's/^S//g')
 	n=$(printf "%04d\n" $Snumber)
 	echo $STEM
-	ln -s /home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/${STEM}_R1_001.fastq.gz Sample_$n/Sample_${n}_R1.fq.gz
-	ln -s /home/jkimball/data_delivery/umgc/2022-q2/220502_A00223_0826_AHJTHFDSX3/Kimball_Project_009/${STEM}_R2_001.fastq.gz Sample_$n/Sample_${n}_R2.fq.gz
+	ln -s /home/jkimball/data_delivery/umgc/2022-q3/220701_A00223_0866_AHVFKKDSX3/Kimball_Project_009/${STEM}_R1_001.fastq.gz Sample_$n/Sample_${n}_R1.fq.gz
+	ln -s /home/jkimball/data_delivery/umgc/2022-q3/220701_A00223_0866_AHVFKKDSX3/Kimball_Project_009/${STEM}_R2_001.fastq.gz Sample_$n/Sample_${n}_R2.fq.gz
 	done
 ```
 In the next step, we will move back to the `R` statistical environment to create a sample key.
@@ -133,7 +139,7 @@ In the next step, we will move back to the `R` statistical environment to create
 library(data.table)
 
 # Read in data
-x <- fread("220516_claudia_analysis_sample_names_and_numbers.csv")
+x <- fread("220727_claudia_analysis_sample_names_and_numbers.csv")
 
 # Change column names
 setnames(x, c("sample_number", "sample_name"))
@@ -154,11 +160,11 @@ x[, sample_name := sub("_[R2].+$", "", sample_name)]
 x <- unique(x)
 
 # Save to CSV
-write.csv(x, file="220516_claudia_analysis_sample_key.csv", row.names = FALSE, sep=",", quote=FALSE)
+write.csv(x, file="220727_claudia_analysis_sample_key.csv", row.names = FALSE, sep=",", quote=FALSE)
 ```
 This next bit is just to check if the symlinks are all correct. You can do it manually (by going into each directory and typing `ls -lh`, paying special attention to the first and last to make sure the sample numbers match the "S number" in the filenames provided by UMGC. This way of checking it just quickly puts the same information into a single file so you can view them all at once. Note: I only did the forward reads ("R1") because if they are correct, the reverse reads ("R2") will also be correct.
 ```bash
-for i in $(cat 220516_claudia_analysis_sample_directory_list.txt);
+for i in $(cat 220727_claudia_analysis_sample_directory_list.txt);
 do
 ls -lh ${i}/${i}_R1.fq.gz >> check_symlinks_full_paths.txt
 done
